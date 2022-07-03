@@ -38,6 +38,12 @@ dependencies:
   firebase_auth: ^3.4.1
   google_sign_in: ^5.3.3
   flutter_facebook_auth: ^4.3.4+2
+  json_annotation: ^4.5.0
+  chopper: ^4.0.6
+  chopper_generator: ^4.0.6
+  build_runner: ^2.1.11
+  json_serializable: ^6.2.0
+  logging: ^1.0.2
 
 dev_dependencies:
   flutter_test:

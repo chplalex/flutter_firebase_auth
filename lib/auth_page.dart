@@ -4,7 +4,10 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_firebase/api_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'login_with_credential_request.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -17,8 +20,13 @@ class _TestState extends State<AuthPage> {
   final _firebaseAuth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn();
   final _facebookAuth = FacebookAuth.instance;
+  final _apiService = ApiService.create();
 
-  OAuthCredential? credential;
+  String? idToken;
+
+  OAuthCredential? _credential;
+
+  UserCredential? _userCredential;
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +53,15 @@ class _TestState extends State<AuthPage> {
         String text;
         if (snapshot.hasData) {
           final user = snapshot.data;
+
+          user?.getIdToken().then((value) => idToken = value.substring(0, 40) + "...");
+
           text = "display name: ${user?.displayName}\n"
               "email: ${user?.email}\n"
               "uid: ${user?.uid}\n"
               "tenantId: ${user?.tenantId}\n"
-              "refreshToken: ${user?.refreshToken}";
+              "refreshToken: ${user?.refreshToken}\n"
+              "idToken = $idToken}";
         } else {
           text = "no authenticated user";
         }
@@ -98,8 +110,7 @@ class _TestState extends State<AuthPage> {
   Widget _serverWidget(BuildContext context) {
     const text = Text("Push credential to server");
     final widget = MaterialButton(
-      onPressed: () => {},
-//      onPressed: _onServerPush,
+      onPressed: _onServerPush,
       child: text,
     );
 
@@ -126,9 +137,9 @@ class _TestState extends State<AuthPage> {
       if (accessToken == null && idToken == null) {
         return;
       }
-      credential = GoogleAuthProvider.credential(accessToken: accessToken, idToken: idToken);
+      _credential = GoogleAuthProvider.credential(accessToken: accessToken, idToken: idToken);
       // *** Firebase side
-      await _firebaseAuth.signInWithCredential(credential!);
+      _userCredential = await _firebaseAuth.signInWithCredential(_credential!);
     } catch (e, s) {
       log("Google authentication error => $e");
       log("Google authentication error stack =>\n$s");
@@ -146,22 +157,11 @@ class _TestState extends State<AuthPage> {
       return;
     }
 
-    credential = FacebookAuthProvider.credential(result.accessToken!.token);
+    _credential = FacebookAuthProvider.credential(result.accessToken!.token);
 
     // *** Firebase side
     try {
-      await _firebaseAuth.signInWithCredential(credential!);
-    } catch (e, s) {
-      log("Firebase authentication error => $e");
-      log("Firebase authentication error stack =>\n$s");
-    }
-
-    log("wait 3 seconds");
-    await Future.delayed(const Duration(seconds: 3));
-    log("try auth again");
-
-    try {
-      await _firebaseAuth.signInWithCredential(credential!);
+      await _firebaseAuth.signInWithCredential(_credential!);
     } catch (e, s) {
       log("Firebase authentication error => $e");
       log("Firebase authentication error stack =>\n$s");
@@ -169,6 +169,41 @@ class _TestState extends State<AuthPage> {
   }
 
   void _onAppleAuth() {}
+
+  FutureOr<void> _onServerPush() async {
+    if (_credential == null) {
+      log("_onServerPush() -> credential is null");
+      return;
+    }
+
+    if (_userCredential == null) {
+      log("_onServerPush() -> userCredential is null");
+      return;
+    }
+
+    final accessToken = await _firebaseAuth.currentUser?.getIdToken();
+
+    if (accessToken == null) {
+      log("_onServerPush() -> accessToken is null");
+      return;
+    }
+
+    final request = LoginWithCredentialRequest.fromUserCredential(_userCredential!, accessToken);
+
+    await _apiService.loginWithCredential(request).then((response) {
+      log("ApiService.loginWithCredential => Success");
+      log("response = $response, isSuccessful = ${response.isSuccessful}, statusCode = ${response.base.statusCode}, reasonPhrase = ${response.base.reasonPhrase}");
+    }, onError: (e) {
+      log("ApiService.loginWithCredential => Error");
+      log("error = $e");
+      //
+      // if (e is DioError) {
+      //   log("Error : ${e.response?.statusCode} -> ${e.response?.statusMessage}");
+      // } else {
+      //   log("Error : $e");
+      // }
+    });
+  }
 
   FutureOr<void> _onLogout() async {
     await _firebaseAuth.signOut();

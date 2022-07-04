@@ -12,11 +12,15 @@ void main() async {
 
   await Firebase.initializeApp();
 
-  runApp(const AuthApp());
+  runApp(AuthApp());
 }
 
 class AuthApp extends StatelessWidget {
-  const AuthApp({Key? key}) : super(key: key);
+  AuthApp({Key? key}) : super(key: key);
+
+  static const _exitCheckDuration = Duration(seconds: 2);
+
+  DateTime _dtExitPressed = DateTime.now().subtract(_exitCheckDuration);
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +30,21 @@ class AuthApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Firebase Auth Demo Page'),
+        home: WillPopScope(
+          onWillPop: () => _onWillPop(),
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Firebase Auth Demo Page'),
+            ),
+            body: const AuthPage(),
           ),
-          body: const AuthPage(),
         ));
+  }
+
+  Future<bool> _onWillPop() async {
+    final dt = DateTime.now();
+    final diff = dt.difference(_dtExitPressed);
+    return diff.inSeconds <= 2;
   }
 }
 

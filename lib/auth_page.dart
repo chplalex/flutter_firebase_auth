@@ -57,7 +57,7 @@ class _TestState extends State<AuthPage> {
           user?.getIdToken().then((value) => idToken = value.substring(0, 40) + "...");
 
           text = "display name: ${user?.displayName}\n"
-              "email: ${user?.email}\n"
+              "email: ${user?.providerData.single.email}\n"
               "uid: ${user?.uid}\n"
               "tenantId: ${user?.tenantId}\n"
               "refreshToken: ${user?.refreshToken}\n"

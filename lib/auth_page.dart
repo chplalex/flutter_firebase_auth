@@ -147,7 +147,7 @@ class _TestState extends State<AuthPage> {
   }
 
   FutureOr<void> _onFacebookAuth() async {
-    final LoginResult result = await _facebookAuth.login();
+    final LoginResult result = await _facebookAuth.login(permissions: const ['email', 'public_profile']);
     log('Facebook auth result status => ${result.status}');
 
     if (result.status == LoginStatus.success) {
@@ -161,7 +161,7 @@ class _TestState extends State<AuthPage> {
 
     // *** Firebase side
     try {
-      await _firebaseAuth.signInWithCredential(_credential!);
+      _userCredential = await _firebaseAuth.signInWithCredential(_credential!);
     } catch (e, s) {
       log("Firebase authentication error => $e");
       log("Firebase authentication error stack =>\n$s");
@@ -182,6 +182,10 @@ class _TestState extends State<AuthPage> {
     }
 
     final accessToken = await _firebaseAuth.currentUser?.getIdToken();
+
+    final newAccessToken = await _userCredential?.user?.getIdToken();
+
+    log("*** (accessToken == newAccessToken) => ${accessToken == newAccessToken}");
 
     if (accessToken == null) {
       log("_onServerPush() -> accessToken is null");

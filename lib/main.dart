@@ -18,9 +18,9 @@ void main() async {
 class AuthApp extends StatelessWidget {
   AuthApp({Key? key}) : super(key: key);
 
-  static const _exitCheckDuration = Duration(seconds: 2);
+  static const _exitTimeoutInMillis = 2000;
 
-  DateTime _dtExitPressed = DateTime.now().subtract(_exitCheckDuration);
+  DateTime _dtPrevExitPressed = DateTime.now().subtract(const Duration(milliseconds: _exitTimeoutInMillis));
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class AuthApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: WillPopScope(
-          onWillPop: () => _onWillPop(),
+          onWillPop: () => _onWillPop(context),
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Firebase Auth Demo Page'),
@@ -41,10 +41,18 @@ class AuthApp extends StatelessWidget {
         ));
   }
 
-  Future<bool> _onWillPop() async {
-    final dt = DateTime.now();
-    final diff = dt.difference(_dtExitPressed);
-    return diff.inSeconds <= 2;
+  Future<bool> _onWillPop(BuildContext context) async {
+    final dtNextExitPressed = DateTime.now();
+    final diff = dtNextExitPressed.difference(_dtPrevExitPressed);
+    final canExit = diff.inMilliseconds <= _exitTimeoutInMillis;
+    print("diff = ${diff.inMilliseconds}, _onWiiPop() = $canExit");
+      const snackBar = SnackBar(
+        content: Text("Press back again to Exit"),
+        duration: Duration(milliseconds: _exitTimeoutInMillis),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    _dtPrevExitPressed = dtNextExitPressed;
+    return canExit;
   }
 }
 

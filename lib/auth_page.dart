@@ -4,10 +4,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:flutter_firebase/api_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-import 'login_with_credential_request.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -20,7 +17,6 @@ class _TestState extends State<AuthPage> {
   final _firebaseAuth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn();
   final _facebookAuth = FacebookAuth.instance;
-  final _apiService = ApiService.create();
 
   String? idToken;
 
@@ -34,20 +30,21 @@ class _TestState extends State<AuthPage> {
     final googleWidget = _googleWidget(context);
     final facebookWidget = _facebookWidget(context);
     final appleWidget = _appleWidget(context);
-    final serverWidget = _serverWidget(context);
+    final anonymousWidget = _anonymousWidget(context);
     final logoutWidget = _logoutWidget(context);
 
     return Container(
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [authWidget, googleWidget, facebookWidget, appleWidget, serverWidget, logoutWidget],
+        children: [authWidget, googleWidget, facebookWidget, appleWidget, anonymousWidget, logoutWidget],
       ),
     );
   }
 
   Widget _authWidget(BuildContext context) {
     final widget = StreamBuilder<User?>(
+      initialData: null,
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         String text;
@@ -56,8 +53,16 @@ class _TestState extends State<AuthPage> {
 
           user?.getIdToken().then((value) => idToken = value.substring(0, 40) + "...");
 
+          late final String? email;
+          try {
+            email = user?.providerData.single.email;
+          } catch (e) {
+            email = null;
+            log("get user?.providerData.single.email => error: $e");
+          }
+
           text = "display name: ${user?.displayName}\n"
-              "email: ${user?.providerData.single.email}\n"
+              "email: $email\n"
               "uid: ${user?.uid}\n"
               "tenantId: ${user?.tenantId}\n"
               "refreshToken: ${user?.refreshToken}\n"
@@ -107,10 +112,10 @@ class _TestState extends State<AuthPage> {
     return widget;
   }
 
-  Widget _serverWidget(BuildContext context) {
-    const text = Text("Push credential to server");
+  Widget _anonymousWidget(BuildContext context) {
+    const text = Text("Anonymous Firebase SingIn");
     final widget = MaterialButton(
-      onPressed: _onServerPush,
+      onPressed: _onAnonymousPush,
       child: text,
     );
 
@@ -140,6 +145,7 @@ class _TestState extends State<AuthPage> {
       _credential = GoogleAuthProvider.credential(accessToken: accessToken, idToken: idToken);
       // *** Firebase side
       _userCredential = await _firebaseAuth.signInWithCredential(_credential!);
+      log("_onGoogleAuth() => Success => _userCredential = $_userCredential");
     } catch (e, s) {
       log("Google authentication error => $e");
       log("Google authentication error stack =>\n$s");
@@ -170,43 +176,18 @@ class _TestState extends State<AuthPage> {
 
   void _onAppleAuth() {}
 
-  FutureOr<void> _onServerPush() async {
-    if (_credential == null) {
-      log("_onServerPush() -> credential is null");
-      return;
+  FutureOr<void> _onAnonymousPush() async {
+    // *** Firebase side
+    try {
+      log("_firebaseAuth.signInAnonymously() => start");
+      _userCredential = await _firebaseAuth.signInAnonymously();
+      _credential = null;
+      log("Anonymous Firebase authentication success: "
+          "if anonymous = ${_userCredential?.user?.isAnonymous}, "
+          "uid = ${_userCredential?.user?.uid}");
+    } catch (e) {
+      log("Anonymous Firebase authentication error: $e");
     }
-
-    if (_userCredential == null) {
-      log("_onServerPush() -> userCredential is null");
-      return;
-    }
-
-    final accessToken = await _firebaseAuth.currentUser?.getIdToken();
-
-    final newAccessToken = await _userCredential?.user?.getIdToken();
-
-    log("*** (accessToken == newAccessToken) => ${accessToken == newAccessToken}");
-
-    if (accessToken == null) {
-      log("_onServerPush() -> accessToken is null");
-      return;
-    }
-
-    final request = LoginWithCredentialRequest.fromUserCredential(_userCredential!, accessToken);
-
-    await _apiService.loginWithCredential(request).then((response) {
-      log("ApiService.loginWithCredential => Success");
-      log("response = $response, isSuccessful = ${response.isSuccessful}, statusCode = ${response.base.statusCode}, reasonPhrase = ${response.base.reasonPhrase}");
-    }, onError: (e) {
-      log("ApiService.loginWithCredential => Error");
-      log("error = $e");
-      //
-      // if (e is DioError) {
-      //   log("Error : ${e.response?.statusCode} -> ${e.response?.statusMessage}");
-      // } else {
-      //   log("Error : $e");
-      // }
-    });
   }
 
   FutureOr<void> _onLogout() async {

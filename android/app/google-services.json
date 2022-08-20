@@ -1,145 +1,34 @@
 {
   "project_info": {
-    "project_number": "65275333079",
-    "project_id": "magen-7032a",
-    "storage_bucket": "magen-7032a.appspot.com"
+    "project_number": "747814556887",
+    "project_id": "chpl-test-project",
+    "storage_bucket": "chpl-test-project.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:65275333079:android:92aa5244b64f7ffd932392",
+        "mobilesdk_app_id": "1:747814556887:android:36d0ea63f9d0e702f74c92",
         "android_client_info": {
           "package_name": "com.chplalex.flutter_firebase"
         }
       },
       "oauth_client": [
         {
-          "client_id": "65275333079-pav23r8p8cu8gulcnkdir2tonlqmt78r.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chplalex.flutter_firebase",
-            "certificate_hash": "750ef7863e34edefcd4f9741a11af599063635c0"
-          }
-        },
-        {
-          "client_id": "65275333079-97bq6tnkkop674dfrousu63jq0ri62td.apps.googleusercontent.com",
+          "client_id": "747814556887-fegmqfqjr6hegu1o04e168lla1oef025.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC44un4thfUxJ_IO5hs9QykivpN1-aZkSM"
+          "current_key": "AIzaSyBzojpTItajKdKjYGBq2Re75qjofqoOnQg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "65275333079-97bq6tnkkop674dfrousu63jq0ri62td.apps.googleusercontent.com",
+              "client_id": "747814556887-fegmqfqjr6hegu1o04e168lla1oef025.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "65275333079-93vlj4djk1ud8i58inngihq03qugneh4.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tingz.magen"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:65275333079:android:2b49f6b8a51d395b932392",
-        "android_client_info": {
-          "package_name": "com.chplalex_test.flutter_widgets"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "65275333079-edh17fl7vof4rr3dl5ittjbonepq2h66.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chplalex_test.flutter_widgets",
-            "certificate_hash": "750ef7863e34edefcd4f9741a11af599063635c0"
-          }
-        },
-        {
-          "client_id": "65275333079-97bq6tnkkop674dfrousu63jq0ri62td.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC44un4thfUxJ_IO5hs9QykivpN1-aZkSM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "65275333079-97bq6tnkkop674dfrousu63jq0ri62td.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "65275333079-93vlj4djk1ud8i58inngihq03qugneh4.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tingz.magen"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:65275333079:android:bafbab0a4687c980932392",
-        "android_client_info": {
-          "package_name": "com.example.magen_flutter_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "65275333079-3srhesmv0imvm8l1an3h2id37b2r0bkc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.magen_flutter_app",
-            "certificate_hash": "e9405874c546a745c6005080ab7ed10b51976caf"
-          }
-        },
-        {
-          "client_id": "65275333079-mloidnmovlbqrhrutlqe3gh8abgdfo97.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.magen_flutter_app",
-            "certificate_hash": "750ef7863e34edefcd4f9741a11af599063635c0"
-          }
-        },
-        {
-          "client_id": "65275333079-97bq6tnkkop674dfrousu63jq0ri62td.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC44un4thfUxJ_IO5hs9QykivpN1-aZkSM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "65275333079-97bq6tnkkop674dfrousu63jq0ri62td.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "65275333079-93vlj4djk1ud8i58inngihq03qugneh4.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tingz.magen"
-              }
             }
           ]
         }

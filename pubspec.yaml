@@ -44,6 +44,8 @@ dependencies:
   build_runner: ^2.1.11
   json_serializable: ^6.2.0
   logging: ^1.0.2
+  firebase_app_check: ^0.0.6+20
+  cloud_firestore: ^3.4.5
 
 dev_dependencies:
   flutter_test:
